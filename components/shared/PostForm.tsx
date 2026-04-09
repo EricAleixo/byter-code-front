@@ -6,40 +6,18 @@ import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
 import Link from "@tiptap/extension-link";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
-import { createLowlight } from "lowlight";
+import ResizeImage from "tiptap-extension-resize-image"; import { createLowlight } from "lowlight";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-  Eye,
-  Save,
-  Send,
-  X,
-  Flame,
-  Tag as TagIcon,
-  ChevronDown,
-  Heading2,
-  Heading3,
-  Bold,
-  Italic,
-  Code,
-  Link2,
-  List,
-  ListOrdered,
-  Quote,
-  Minus,
-  Code2,
-  Undo,
-  Redo,
-  Heading1,
-  Upload,
-  Link as LinkIcon,
-  Loader2,
-  Trash2,
-  AlertCircle,
+  Eye, Save, Send, X, Flame, Tag as TagIcon, ChevronDown,
+  Heading2, Heading3, Bold, Italic, Code, Link2, List,
+  ListOrdered, Quote, Minus, Code2, Undo, Redo, Heading1,
+  Upload, Link as LinkIcon, Loader2, Trash2, AlertCircle, ImageIcon,
 } from "lucide-react";
 import { uploadPostImage } from "@/src/app/(admin)/admin/posts/_actions/upload-image.actions";
 
-// ─── tipos ────────────────────────────────────────────────────────────────────
+// ─── types ────────────────────────────────────────────────────────────────────
 
 export type ApiCategory = {
   id: string;
@@ -64,6 +42,7 @@ export type PostFormData = {
   coverImagePublicId?: string;
   status: "DRAFT" | "PUBLISHED";
 };
+
 type Props = {
   categories: ApiCategory[];
   tags: ApiTag[];
@@ -86,13 +65,34 @@ const EMPTY: PostFormData = {
   status: "DRAFT",
 };
 
+// ─── image extension ──────────────────────────────────────────────────────────
+
+const ImageWithId = ResizeImage.extend({
+  addAttributes() {
+    return {
+      ...this.parent?.(),
+      "data-public-id": {
+        default: null,
+        parseHTML: (el) => el.getAttribute("data-public-id"),
+        renderHTML: (attrs) => {
+          if (!attrs["data-public-id"]) return {};
+          return { "data-public-id": attrs["data-public-id"] };
+        },
+      },
+    };
+  },
+});
+
 // ─── toolbar ──────────────────────────────────────────────────────────────────
 
 type ToolbarProps = {
   editor: ReturnType<typeof useEditor> | null;
+  onImageUpload: (file: File) => Promise<void>;
 };
 
-function EditorToolbar({ editor }: ToolbarProps) {
+function EditorToolbar({ editor, onImageUpload }: ToolbarProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   if (!editor) return null;
 
   function setLink() {
@@ -112,8 +112,8 @@ function EditorToolbar({ editor }: ToolbarProps) {
       title={title}
       onClick={onClick}
       className={`p-1.5 rounded transition-colors ${active
-        ? "bg-violet-500/20 text-violet-400"
-        : "text-zinc-500 hover:text-violet-400 hover:bg-zinc-800"
+          ? "bg-violet-500/20 text-violet-400"
+          : "text-zinc-500 hover:text-violet-400 hover:bg-zinc-800"
         }`}
     >
       {icon}
@@ -145,6 +145,22 @@ function EditorToolbar({ editor }: ToolbarProps) {
 
       {btn(false, () => editor.chain().focus().undo().run(), <Undo className="size-3.5" />, "Desfazer")}
       {btn(false, () => editor.chain().focus().redo().run(), <Redo className="size-3.5" />, "Refazer")}
+
+      <div className="w-px h-4 bg-zinc-700 mx-1" />
+
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file) onImageUpload(file).finally(() => {
+            if (fileInputRef.current) fileInputRef.current.value = "";
+          });
+        }}
+      />
+      {btn(false, () => fileInputRef.current?.click(), <ImageIcon className="size-3.5" />, "Inserir imagem")}
     </div>
   );
 }
@@ -168,7 +184,6 @@ function CoverImageInput({ value, onChange }: CoverImageProps) {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // valida tamanho no client antes de enviar (5MB)
     if (file.size > 5 * 1024 * 1024) {
       setUploadError("Arquivo muito grande. Máximo permitido: 5MB.");
       return;
@@ -181,16 +196,11 @@ function CoverImageInput({ value, onChange }: CoverImageProps) {
       const fd = new FormData();
       fd.append("image", file);
       const data = await uploadPostImage(fd);
-
-      onChange({
-        url: data.imageUrl,
-        publicId: data.publicId,
-      });
+      onChange({ url: data.imageUrl, publicId: data.publicId });
     } catch (err: any) {
       setUploadError(err.message ?? "Erro desconhecido.");
     } finally {
       setUploading(false);
-      // limpa o input para permitir re-upload do mesmo arquivo
       if (fileInputRef.current) fileInputRef.current.value = "";
     }
   }
@@ -203,14 +213,11 @@ function CoverImageInput({ value, onChange }: CoverImageProps) {
 
   return (
     <div className="space-y-3">
-      {/* toggle */}
       <div className="flex items-center gap-1 p-1 bg-zinc-800/60 rounded-lg w-fit border border-zinc-700/50">
         <button
           type="button"
           onClick={() => { setMode("upload"); setUploadError(null); }}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${mode === "upload"
-            ? "bg-zinc-700 text-zinc-100 shadow"
-            : "text-zinc-500 hover:text-zinc-300"
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${mode === "upload" ? "bg-zinc-700 text-zinc-100 shadow" : "text-zinc-500 hover:text-zinc-300"
             }`}
         >
           <Upload className="size-3" />
@@ -219,9 +226,7 @@ function CoverImageInput({ value, onChange }: CoverImageProps) {
         <button
           type="button"
           onClick={() => { setMode("url"); setUploadError(null); }}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${mode === "url"
-            ? "bg-zinc-700 text-zinc-100 shadow"
-            : "text-zinc-500 hover:text-zinc-300"
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${mode === "url" ? "bg-zinc-700 text-zinc-100 shadow" : "text-zinc-500 hover:text-zinc-300"
             }`}
         >
           <LinkIcon className="size-3" />
@@ -229,7 +234,6 @@ function CoverImageInput({ value, onChange }: CoverImageProps) {
         </button>
       </div>
 
-      {/* imagem já definida — preview grande com lixeira */}
       {value ? (
         <div className="relative w-full h-40 rounded-lg overflow-hidden border border-zinc-700 bg-zinc-900 group">
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -247,16 +251,12 @@ function CoverImageInput({ value, onChange }: CoverImageProps) {
           </div>
         </div>
       ) : (
-        /* sem imagem — inputs de upload ou URL */
         <div className="flex-1">
           {mode === "url" ? (
             <Input
               placeholder="Cole a URL da imagem..."
               value={value}
-              onChange={(e) => onChange({
-                url: e.target.value,
-                publicId: undefined
-              })}
+              onChange={(e) => onChange({ url: e.target.value, publicId: undefined })}
               className="bg-zinc-900 border-zinc-700 text-zinc-300 placeholder:text-zinc-600 focus-visible:ring-violet-600 h-9 text-sm"
             />
           ) : (
@@ -273,30 +273,20 @@ function CoverImageInput({ value, onChange }: CoverImageProps) {
                 disabled={uploading}
                 onClick={() => fileInputRef.current?.click()}
                 className={`w-full h-9 flex items-center justify-center gap-2 rounded-lg border text-sm font-medium transition-all ${uploading
-                  ? "border-zinc-700 bg-zinc-900 text-zinc-500 cursor-not-allowed"
-                  : uploadError
-                    ? "border-rose-600/40 bg-rose-500/10 text-rose-400 hover:bg-rose-500/20"
-                    : "border-zinc-700 bg-zinc-900 text-zinc-400 hover:border-violet-600/60 hover:text-violet-400 hover:bg-violet-500/10"
+                    ? "border-zinc-700 bg-zinc-900 text-zinc-500 cursor-not-allowed"
+                    : uploadError
+                      ? "border-rose-600/40 bg-rose-500/10 text-rose-400 hover:bg-rose-500/20"
+                      : "border-zinc-700 bg-zinc-900 text-zinc-400 hover:border-violet-600/60 hover:text-violet-400 hover:bg-violet-500/10"
                   }`}
               >
                 {uploading ? (
-                  <>
-                    <Loader2 className="size-3.5 animate-spin" />
-                    Enviando... (máx. 5MB)
-                  </>
+                  <><Loader2 className="size-3.5 animate-spin" />Enviando... (máx. 5MB)</>
                 ) : uploadError ? (
-                  <>
-                    <AlertCircle className="size-3.5" />
-                    Erro — clique para tentar novamente
-                  </>
+                  <><AlertCircle className="size-3.5" />Erro — clique para tentar novamente</>
                 ) : (
-                  <>
-                    <Upload className="size-3.5" />
-                    Selecionar arquivo (máx. 5MB)
-                  </>
+                  <><Upload className="size-3.5" />Selecionar arquivo (máx. 5MB)</>
                 )}
               </button>
-
               {uploadError && (
                 <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1">
                   <AlertCircle className="size-3 shrink-0" />
@@ -335,6 +325,7 @@ export default function PostForm({
       Placeholder.configure({ placeholder: "Escreva o conteúdo do post aqui..." }),
       Link.configure({ openOnClick: false }),
       CodeBlockLowlight.configure({ lowlight }),
+      ImageWithId,
     ],
     content: form.content || "",
     editorProps: {
@@ -365,6 +356,19 @@ export default function PostForm({
     );
   }
 
+  async function handleContentImageUpload(file: File) {
+    const fd = new FormData();
+    fd.append("image", file);
+    const data = await uploadPostImage(fd);
+
+    (editor?.chain().focus() as any)
+      .setImage({
+        src: data.imageUrl,
+        "data-public-id": data.publicId,
+      })
+      .run();
+  }
+
   function validate(): boolean {
     const e: typeof errors = {};
     if (!form.title.trim()) e.title = "Título obrigatório";
@@ -387,9 +391,7 @@ export default function PostForm({
     fd.set("content", form.content);
     fd.set("categoryId", form.categoryId);
     fd.set("coverImage", form.coverImage);
-    if (form.coverImagePublicId) {
-      fd.set("coverImagePublicId", form.coverImagePublicId);
-    }
+    if (form.coverImagePublicId) fd.set("coverImagePublicId", form.coverImagePublicId);
     fd.set("readTime", readTime);
     fd.set("status", status);
     form.tagIds.forEach((id) => fd.append("tagIds", id));
@@ -453,7 +455,6 @@ export default function PostForm({
 
   return (
     <div className="min-w-0 space-y-7">
-
       {error && (
         <div className="rounded-lg bg-red-500/10 border border-red-500/20 px-4 py-3 text-sm text-red-400">
           {decodeURIComponent(error)}
@@ -491,8 +492,6 @@ export default function PostForm({
 
       {/* categoria + tags */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-
-        {/* categoria */}
         <div>
           <label className="block text-xs font-bold uppercase tracking-widest text-zinc-500 mb-2">
             Categoria <span className="text-rose-500">*</span>
@@ -535,7 +534,6 @@ export default function PostForm({
           {errors.categoryId && <p className="text-xs text-rose-400 mt-1.5">{errors.categoryId}</p>}
         </div>
 
-        {/* tags */}
         <div>
           <label className="block text-xs font-bold uppercase tracking-widest text-zinc-500 mb-2">
             <TagIcon className="size-3 inline mr-1" />Tags
@@ -549,8 +547,8 @@ export default function PostForm({
                   type="button"
                   onClick={() => toggleTag(tag.id)}
                   className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold border transition-all ${active
-                    ? "bg-violet-500/20 text-violet-300 border-violet-500/30"
-                    : "bg-zinc-900 text-zinc-600 border-zinc-800 hover:border-zinc-600 hover:text-zinc-400"
+                      ? "bg-violet-500/20 text-violet-300 border-violet-500/30"
+                      : "bg-zinc-900 text-zinc-600 border-zinc-800 hover:border-zinc-600 hover:text-zinc-400"
                     }`}
                 >
                   {active && <Flame className="size-2.5 inline mr-1" />}
@@ -585,7 +583,7 @@ export default function PostForm({
         </div>
 
         <div className={`rounded-lg border overflow-hidden ${errors.content ? "border-rose-600" : "border-zinc-700"}`}>
-          <EditorToolbar editor={editor} />
+          <EditorToolbar editor={editor} onImageUpload={handleContentImageUpload} />
           <div className="bg-zinc-900">
             <EditorContent editor={editor} />
           </div>

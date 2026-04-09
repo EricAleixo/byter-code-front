@@ -2,7 +2,6 @@ import { postService } from "@/src/services/posts.service";
 import {
   Clock,
   Flame,
-  Globe,
 } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -14,54 +13,28 @@ import { getCurrentUser } from "@/src/utils/getCurrentUser";
 import { CommentsSection } from "./_components/CommentSection";
 import { DynamicIcon } from "@/src/utils/DynamicIcon";
 
-// ─── tipos ────────────────────────────────────────────────────────────────────
-
-type Comment = {
-  id: string;
-  author: string;
-  avatar: string;
-  date: string;
-  body: string;
-  likes: number;
-  replies?: Comment[];
-};
-
-// ─── mock ─────────────────────────────────────────────────────────────────────
-
-const POST = {
-  slug: "tailwind-v4-o-que-mudou",
-  category: "Frontend",
-  categorySlug: "frontend",
-  title: "Tailwind v4: tudo que mudou e como migrar sem quebrar nada",
-  excerpt:
-    "A nova engine em Rust, a eliminação do tailwind.config.js e as novas primitivas de CSS que mudam tudo na forma como você estiliza suas aplicações.",
-  author: {
-    name: "João Vitor Lima",
-    role: "Dev Frontend Sênior",
-    avatar: "https://picsum.photos/seed/autor-joao/80/80",
-  },
-  date: "29 mar 2025",
-  readTime: "6 min",
-  tag: "novo" as const,
-  image: "https://picsum.photos/seed/tailwindv4/1200/500",
-  likes: 341,
-  comments: 28,
-};
 
 // ─── helpers ──────────────────────────────────────────────────────────────────
 
-function TagBadge({ tag }: { tag: "novo" | "trending" | "exclusivo" }) {
+function TagBadge({ tag }: { tag: "novo" }) {
   const map = {
-    novo: "bg-violet-500/20 text-violet-300 border-violet-500/30",
-    trending: "bg-rose-500/20 text-rose-300 border-rose-500/30",
-    exclusivo: "bg-amber-500/20 text-amber-300 border-amber-500/30",
+    novo: "bg-violet-500/20 text-violet-300 border-violet-500/30"
   };
   return (
     <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest border ${map[tag]}`}>
-      {tag === "trending" && <Flame className="size-2.5" />}
       {tag}
     </span>
   );
+}
+
+function isNewPost(createdAt: string | Date) {
+  const now = new Date();
+  const created = new Date(createdAt);
+
+  const diffInMs = now.getTime() - created.getTime();
+  const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
+
+  return diffInDays <= 2;
 }
 // ─── page ─────────────────────────────────────────────────────────────────────
 
@@ -105,7 +78,7 @@ export default async function PostPage({ params }: props) {
                   {post.category.name}
                 </Link>
                 <span className="text-zinc-700">·</span>
-                <TagBadge tag={POST.tag} />
+                {isNewPost(post.createdAt) && <TagBadge tag="novo" />}
               </div>
 
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white leading-tight mb-4">
