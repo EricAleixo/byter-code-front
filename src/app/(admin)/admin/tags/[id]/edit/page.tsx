@@ -19,7 +19,7 @@ export default async function EditTagPage({
   searchParams: Promise<{ error?: string }>;
 }) {
   const cookieStore = await cookies();
-  if (!cookieStore.get("token")) redirect("/login");
+  if (!cookieStore.get("token")) redirect("/auth/login");
 
   const { id } = await params;
   const { error } = await searchParams;

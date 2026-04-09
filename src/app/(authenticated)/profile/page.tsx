@@ -30,7 +30,7 @@ function RoleBadge({ role }: { role: string }) {
 export default async function ProfilePage() {
 
   const user = await getCurrentUser();
-  if (!user) redirect("/login");
+  if (!user) redirect("/auth/login");
 
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100">

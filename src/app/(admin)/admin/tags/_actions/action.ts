@@ -10,7 +10,7 @@ async function getToken() {
 
 export async function createTagAction(formData: FormData) {
   const token = await getToken();
-  if (!token) redirect("/login");
+  if (!token) redirect("/auth/login");
 
   const body = { name: formData.get("name") as string };
 
@@ -34,7 +34,7 @@ export async function createTagAction(formData: FormData) {
 
 export async function updateTagAction(id: string, formData: FormData) {
   const token = await getToken();
-  if (!token) redirect("/login");
+  if (!token) redirect("/auth/login");
 
   const body = { name: formData.get("name") as string };
 
@@ -58,7 +58,7 @@ export async function updateTagAction(id: string, formData: FormData) {
 
 export async function deleteTagAction(id: string) {
   const token = await getToken();
-  if (!token) redirect("/login");
+  if (!token) redirect("/auth/login");
 
   await fetch(`${process.env.NEXT_PUBLIC_API_URL}/tags/${id}`, {
     method: "DELETE",

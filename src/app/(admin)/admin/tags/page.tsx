@@ -32,7 +32,7 @@ function formatDate(dateStr: string) {
 
 export default async function AdminTagsPage() {
   const cookieStore = await cookies();
-  if (!cookieStore.get("token")) redirect("/login");
+  if (!cookieStore.get("token")) redirect("/auth/login");
 
   const tags = await getTags();
 

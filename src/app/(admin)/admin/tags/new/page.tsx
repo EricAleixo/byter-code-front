@@ -11,7 +11,7 @@ export default async function NewTagPage({
   searchParams: Promise<{ error?: string }>;
 }) {
   const cookieStore = await cookies();
-  if (!cookieStore.get("token")) redirect("/login");
+  if (!cookieStore.get("token")) redirect("/auth/login");
 
   const { error } = await searchParams;
 

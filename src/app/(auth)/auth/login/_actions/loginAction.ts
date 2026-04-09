@@ -19,13 +19,13 @@ export async function loginAction(formData: FormData) {
     if (!res.ok) {
       const error = await res.json();
       const message = encodeURIComponent(error.message ?? "Credenciais inválidas.");
-      redirect(`/login?error=${message}`);
+      redirect(`/auth/login?error=${message}`);
     }
 
     const data = await res.json();
     token = data.token;
   } catch {
-    redirect(`/login?error=${encodeURIComponent("Erro ao conectar com o servidor.")}`);
+    redirect(`/auth/login?error=${encodeURIComponent("Erro ao conectar com o servidor.")}`);
   }
 
   const cookieStore = await cookies();

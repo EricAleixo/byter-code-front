@@ -21,7 +21,7 @@ export default async function NewPostPage({
   searchParams: Promise<{ error?: string }>;
 }) {
   const cookieStore = await cookies();
-  if (!cookieStore.get("token")) redirect("/login");
+  if (!cookieStore.get("token")) redirect("/auth/login");
 
   const [categories, tags] = await Promise.all([getCategories(), getTags()]);
   const { error } = await searchParams;

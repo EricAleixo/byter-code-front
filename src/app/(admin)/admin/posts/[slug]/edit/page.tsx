@@ -22,7 +22,7 @@ export default async function Page({
     params
 }: props) {
     const cookieStore = await cookies();
-    if (!cookieStore.get("token")) redirect("/login");
+    if (!cookieStore.get("token")) redirect("/auth/login");
 
 
     const { slug } = await params;

@@ -120,7 +120,7 @@ export default async function AdminPostsPage({
   searchParams: Promise<{ page?: string }>;
 }) {
   const cookieStore = await cookies();
-  if (!cookieStore.get("token")) redirect("/login");
+  if (!cookieStore.get("token")) redirect("/auth/login");
 
   const { page: pageParam } = await searchParams;
   const page = Math.max(1, Number(pageParam) || 1);

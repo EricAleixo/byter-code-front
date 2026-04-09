@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 
 export async function createPostAction(formData: FormData) {
   const token = await getToken();
-  if (!token) redirect("/login");
+  if (!token) redirect("/auth/login");
 
   const tagIds = formData.getAll("tagIds") as string[];
 
@@ -43,7 +43,7 @@ export async function createPostAction(formData: FormData) {
 
 export async function updatePostAction(id: string, formData: FormData) {
   const token = await getToken();
-  if (!token) redirect("/login");
+  if (!token) redirect("/auth/login");
 
   const tagIds = formData.getAll("tagIds") as string[];
 
@@ -82,7 +82,7 @@ export async function updatePostAction(id: string, formData: FormData) {
 
 export async function deletePostAction(id: string) {
   const token = await getToken();
-  if (!token) redirect("/login");
+  if (!token) redirect("/auth/login");
 
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts/${id}`, {
     method: "DELETE",
