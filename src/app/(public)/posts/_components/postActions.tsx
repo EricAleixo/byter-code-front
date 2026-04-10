@@ -13,6 +13,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useEffect, useState } from "react";
 
 type Props = {
   path: string;
@@ -20,7 +21,11 @@ type Props = {
 };
 
 export function PostActions({ path, title }: Props) {
-  const url = window.location.origin + path
+  const [url, setUrl] = useState("");
+
+  useEffect(() => {
+    setUrl(window.location.origin + path);
+  }, [path]);
   const encodedUrl = encodeURIComponent(url);
   const encodedTitle = encodeURIComponent(title);
 
