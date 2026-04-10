@@ -218,7 +218,7 @@ export function MobileMenuButton({ user, categories, navItems }: Props) {
                 Entrar
               </Link>
               <Link
-                href="/auth/register"
+                href="/auth/login"
                 onClick={() => setOpen(false)}
                 className="w-full flex items-center justify-center px-4 py-2.5 rounded-lg text-sm font-semibold text-zinc-400 hover:text-white border border-zinc-700 hover:border-zinc-500 transition-colors"
               >

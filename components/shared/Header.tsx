@@ -114,7 +114,7 @@ export async function Header() {
                 Entrar
               </Link>
               <Link
-                href="/auth/register"
+                href="/auth/login"
                 className="px-3 py-1.5 text-xs font-semibold text-white rounded-lg transition-colors bg-violet-600 hover:bg-violet-500"
               >
                 Cadastrar-se
