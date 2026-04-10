@@ -438,7 +438,7 @@ export function CommentsSection({ postId, initialComments, currentUser }: Props)
                         </>
                     ) : (
                         <div className="flex items-center gap-2 px-4 py-3 bg-zinc-900 border border-zinc-800 rounded-xl text-sm text-zinc-500">
-                            <Link href="/auth/login" className="text-violet-400 hover:text-violet-300 font-semibold transition-colors">
+                            <Link href="/auth/register" className="text-violet-400 hover:text-violet-300 font-semibold transition-colors">
                                 Faça login
                             </Link>
                             para comentar.
