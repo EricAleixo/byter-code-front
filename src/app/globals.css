@@ -169,3 +169,17 @@ button{
 .ProseMirror a {
   @apply text-violet-400 no-underline hover:text-violet-300;
 }
+
+/* globals.css */
+.prose-custom .tiptap img,
+.prose-custom img {
+  max-width: 100% !important;
+  width: 100% !important;
+  height: auto !important;
+  display: block;
+}
+
+.tiptap {
+  overflow: hidden;
+  max-width: 100%;
+}

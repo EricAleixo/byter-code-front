@@ -52,7 +52,9 @@ export function PostContent({ content }: Props) {
           "[&_blockquote_p]:italic " +
           "[&_.quote-author]:not-italic [&_.quote-author]:text-violet-400 [&_.quote-author]:text-xs [&_.quote-author]:block [&_.quote-author]:mt-2 [&_.quote-author]:not-italic " +
           "prose-hr:border-zinc-800 " +
-          "prose-li:text-zinc-300",
+          "prose-li:text-zinc-300" +
+          "prose-li:text-zinc-300 " +
+          "[&_img]:!max-w-full [&_img]:!h-auto",
       },
     },
   });

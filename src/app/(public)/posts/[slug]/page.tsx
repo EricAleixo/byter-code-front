@@ -123,8 +123,8 @@ export default async function PostPage({ params }: props) {
               <div className="absolute inset-0 bg-linear-to-t from-zinc-950/60 to-transparent" />
             </div>
 
-            <div className="prose-custom space-y-6 text-zinc-300 text-[15px] leading-7">
-              <PostContent content={post.content}></PostContent>
+            <div className="prose-custom space-y-6 text-zinc-300 text-[15px] leading-7 overflow-hidden">
+              <PostContent content={post.content} />
             </div>
 
             {/* ações do post */}
