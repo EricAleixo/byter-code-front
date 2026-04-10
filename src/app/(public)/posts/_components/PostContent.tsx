@@ -4,11 +4,24 @@ import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 import { createLowlight } from "lowlight";
-import ResizeImage from "tiptap-extension-resize-image";
+import { Image } from "@tiptap/extension-image";
 
-type Props = {
-  content: string;
-};
+function processImages(html: string): string {
+  return html.replace(
+    /<img([^>]*?)>/g,
+    (_, attrs) => {
+      const widthMatch = attrs.match(/\bwidth="([\d.]+)"/);
+      const finalWidth = widthMatch ? `min(${widthMatch[1]}px, 100%)` : "min(480px, 100%)";
+      const cleanAttrs = attrs
+        .replace(/\s*width="[^"]*"/g, "")
+        .replace(/\s*height="[^"]*"/g, "")
+        .replace(/\s*containerstyle="[^"]*"/g, "")
+        .replace(/\s*wrapperstyle="[^"]*"/g, "")
+        .replace(/\s*style="[^"]*"/g, "");
+      return `<img${cleanAttrs} style="max-width: ${finalWidth}; width: 100%; height: auto; display: block; margin: 0 auto; border-radius: 12px; border: 1px solid rgb(109 40 217 / 0.4);">`;
+    }
+  );
+}
 
 function processBlockquotes(html: string): string {
   return html.replace(
@@ -24,8 +37,30 @@ function processBlockquotes(html: string): string {
   );
 }
 
+const ResponsiveImage = Image.extend({
+  addAttributes() {
+    return {
+      ...this.parent?.(),
+      style: {
+        default: null,
+        parseHTML: (el) => el.getAttribute("style"),
+        renderHTML: (attrs) => {
+          if (!attrs.style) return {};
+          return { style: attrs.style };
+        },
+      },
+    };
+  },
+});
+
+type Props = { content: string };
+
 export function PostContent({ content }: Props) {
   const lowlight = createLowlight();
+
+  // Processa o HTML ANTES de passar pro Tiptap
+  const processedContent = processImages(processBlockquotes(content));
+
   const editor = useEditor({
     immediatelyRender: false,
     editable: false,
@@ -33,9 +68,10 @@ export function PostContent({ content }: Props) {
       StarterKit.configure({ codeBlock: false }),
       Link.configure({ openOnClick: true }),
       CodeBlockLowlight.configure({ lowlight }),
-      ResizeImage.configure(),
+      Image.configure({ inline: false }), // só para parsear, sem mexer no style
+      ResponsiveImage
     ],
-    content: processBlockquotes(content),
+    content: processedContent,
     editorProps: {
       attributes: {
         class:
@@ -50,11 +86,9 @@ export function PostContent({ content }: Props) {
           "prose-pre:bg-zinc-900 prose-pre:border prose-pre:border-zinc-700 prose-pre:rounded-xl " +
           "prose-blockquote:border-l-violet-600 prose-blockquote:text-zinc-400 prose-blockquote:not-italic " +
           "[&_blockquote_p]:italic " +
-          "[&_.quote-author]:not-italic [&_.quote-author]:text-violet-400 [&_.quote-author]:text-xs [&_.quote-author]:block [&_.quote-author]:mt-2 [&_.quote-author]:not-italic " +
+          "[&_.quote-author]:not-italic [&_.quote-author]:text-violet-400 [&_.quote-author]:text-xs [&_.quote-author]:block [&_.quote-author]:mt-2 " +
           "prose-hr:border-zinc-800 " +
-          "prose-li:text-zinc-300" +
-          "prose-li:text-zinc-300 " +
-          "[&_img]:!max-w-full [&_img]:!h-auto",
+          "prose-li:text-zinc-300 ",
       },
     },
   });
