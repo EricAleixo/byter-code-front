@@ -62,17 +62,18 @@ function FeaturedArticle({ post }: { post: Post }) {
             {post.title}
           </h2>
           <p className="text-zinc-400 text-sm leading-relaxed mb-4">{post.excerpt}</p>
-          <div className="flex items-center gap-3 text-xs text-zinc-500">
+          <div className="flex flex-col gap-2 text-xs text-zinc-500 md:flex-row md:justify-between">
             <UserAvatar user={post.author} />
-            <span>·</span>
-            <span>{formatDate(post.publishedAt ?? post.createdAt)}</span>
-            {post.readTime && (
-              <>
-                <span>·</span>
-                <Clock className="size-3" />
-                <span>{post.readTime} de leitura</span>
-              </>
-            )}
+            <div className="flex items-center gap-2">
+              <span>{formatDate(post.publishedAt ?? post.createdAt)}</span>
+              {post.readTime && (
+                <>
+                  <span>·</span>
+                  <Clock className="size-3" />
+                  <span>{post.readTime} de leitura</span>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </article>
