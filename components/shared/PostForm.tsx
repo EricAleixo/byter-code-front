@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
@@ -112,16 +112,16 @@ function EditorToolbar({ editor, onImageUpload }: ToolbarProps) {
       title={title}
       onClick={onClick}
       className={`p-1.5 rounded transition-colors ${active
-          ? "bg-violet-500/20 text-violet-400"
-          : "text-zinc-500 hover:text-violet-400 hover:bg-zinc-800"
-        }`}
+        ? "bg-violet-500/20 text-violet-400"
+        : "text-zinc-500 hover:text-violet-400 hover:bg-zinc-800"
+      }`}
     >
       {icon}
     </button>
   );
 
   return (
-    <div className="flex items-center gap-0.5 flex-wrap px-2 py-1.5 bg-zinc-900 border border-b-0 border-zinc-700 rounded-t-lg">
+    <div className="flex items-center gap-0.5 flex-wrap px-2 py-1.5 bg-zinc-900 border-b border-zinc-700 rounded-t-lg">
       {btn(editor.isActive("bold"), () => editor.chain().focus().toggleBold().run(), <Bold className="size-3.5" />, "Negrito")}
       {btn(editor.isActive("italic"), () => editor.chain().focus().toggleItalic().run(), <Italic className="size-3.5" />, "Itálico")}
       {btn(editor.isActive("code"), () => editor.chain().focus().toggleCode().run(), <Code className="size-3.5" />, "Código inline")}
@@ -273,10 +273,10 @@ function CoverImageInput({ value, onChange }: CoverImageProps) {
                 disabled={uploading}
                 onClick={() => fileInputRef.current?.click()}
                 className={`w-full h-9 flex items-center justify-center gap-2 rounded-lg border text-sm font-medium transition-all ${uploading
-                    ? "border-zinc-700 bg-zinc-900 text-zinc-500 cursor-not-allowed"
-                    : uploadError
-                      ? "border-rose-600/40 bg-rose-500/10 text-rose-400 hover:bg-rose-500/20"
-                      : "border-zinc-700 bg-zinc-900 text-zinc-400 hover:border-violet-600/60 hover:text-violet-400 hover:bg-violet-500/10"
+                  ? "border-zinc-700 bg-zinc-900 text-zinc-500 cursor-not-allowed"
+                  : uploadError
+                    ? "border-rose-600/40 bg-rose-500/10 text-rose-400 hover:bg-rose-500/20"
+                    : "border-zinc-700 bg-zinc-900 text-zinc-400 hover:border-violet-600/60 hover:text-violet-400 hover:bg-violet-500/10"
                   }`}
               >
                 {uploading ? (
@@ -547,8 +547,8 @@ export default function PostForm({
                   type="button"
                   onClick={() => toggleTag(tag.id)}
                   className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold border transition-all ${active
-                      ? "bg-violet-500/20 text-violet-300 border-violet-500/30"
-                      : "bg-zinc-900 text-zinc-600 border-zinc-800 hover:border-zinc-600 hover:text-zinc-400"
+                    ? "bg-violet-500/20 text-violet-300 border-violet-500/30"
+                    : "bg-zinc-900 text-zinc-600 border-zinc-800 hover:border-zinc-600 hover:text-zinc-400"
                     }`}
                 >
                   {active && <Flame className="size-2.5 inline mr-1" />}
@@ -582,9 +582,9 @@ export default function PostForm({
           </label>
         </div>
 
-        <div className={`rounded-lg border overflow-hidden ${errors.content ? "border-rose-600" : "border-zinc-700"}`}>
+        <div className={`rounded-lg border ${errors.content ? "border-rose-600" : "border-zinc-700"}`}>
           <EditorToolbar editor={editor} onImageUpload={handleContentImageUpload} />
-          <div className="bg-zinc-900">
+          <div className="bg-zinc-900 rounded-b-lg overflow-y-auto max-h-150">
             <EditorContent editor={editor} />
           </div>
         </div>

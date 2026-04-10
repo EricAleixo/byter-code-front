@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { categoriesService } from "@/src/services/categories.service";
-import { Rss, Heart } from "lucide-react";
 import { FaGithub, FaInstagram, FaTwitter, FaWhatsapp } from "react-icons/fa6";
 
 export async function Footer() {
@@ -26,7 +25,7 @@ export async function Footer() {
                   WebkitTextFillColor: "transparent",
                 }}
               >
-                byte-coder
+                byter-code
               </span>
             </Link>
 
@@ -123,7 +122,7 @@ export async function Footer() {
         {/* rodapé inferior */}
         <div className="mt-10 pt-6 border-t border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-xs text-zinc-600">
-            © {new Date().getFullYear()} byte-coder. Todos os direitos reservados.
+            © {new Date().getFullYear()} byter-code. Todos os direitos reservados.
           </p>
         </div>
       </div>

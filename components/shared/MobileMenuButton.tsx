@@ -84,7 +84,7 @@ export function MobileMenuButton({ user, categories, navItems }: Props) {
               WebkitTextFillColor: "transparent",
             }}
           >
-            byte-coder
+            byter-code
           </span>
           <button
             onClick={() => setOpen(false)}

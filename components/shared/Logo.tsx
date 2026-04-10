@@ -128,7 +128,7 @@ export function ByteCoderLogo() {
             WebkitTextFillColor: "transparent",
           }}
         >
-          byte-coder
+          byter-code
         </span>
       </Link>
     </div>

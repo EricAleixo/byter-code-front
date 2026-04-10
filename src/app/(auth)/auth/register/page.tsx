@@ -30,7 +30,7 @@ export default async function SignupPage({
                   WebkitTextFillColor: "transparent",
                 }}
               >
-                byte-coder
+                byter-code
               </span>
             </Link>
             <p className="text-zinc-500 text-sm">Crie sua conta e faça parte da comunidade</p>

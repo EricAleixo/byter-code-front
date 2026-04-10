@@ -31,7 +31,7 @@ export default async function LoginPage({
                   WebkitTextFillColor: "transparent",
                 }}
               >
-                byte-coder
+                byter-code
               </span>
             </Link>
             <p className="text-zinc-500 text-sm">Acesse o painel com sua conta</p>

@@ -35,7 +35,7 @@ export async function HeaderMobile() {
                 WebkitTextFillColor: "transparent",
               }}
             >
-              byte-coder
+              byter-code
             </span>
           </Link>
 

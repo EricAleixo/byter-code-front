@@ -45,10 +45,6 @@ export default async function NewPostPage({
           onSubmit={createPostAction}
         />
       </main>
-
-      <footer className="border-t border-zinc-800 mt-16 py-6 text-center text-xs text-zinc-600">
-        © {new Date().getFullYear()} byte-coder · Admin
-      </footer>
     </div>
   );
 }

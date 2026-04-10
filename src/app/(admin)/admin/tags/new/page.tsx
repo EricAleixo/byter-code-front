@@ -27,10 +27,6 @@ export default async function NewTagPage({
         </div>
         <TagForm error={error} onSubmit={createTagAction} />
       </main>
-
-      <footer className="border-t border-zinc-800 mt-16 py-6 text-center text-xs text-zinc-600">
-        © {new Date().getFullYear()} byte-coder · Admin
-      </footer>
     </div>
   );
 }

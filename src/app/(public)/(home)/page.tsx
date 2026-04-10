@@ -15,6 +15,7 @@ import { formatDate } from "@/src/utils/formatDate";
 import { UserAvatar } from "@/components/shared/UserAvatar";
 import { DynamicIcon } from "@/src/utils/DynamicIcon";
 import { LanguageMostUsed } from "./_components/LanguageMostUsed";
+import { postService } from "@/src/services/posts.service";
 
 // ─── helpers ──────────────────────────────────────────────────────────────────
 
@@ -344,10 +345,12 @@ function CategorySection({ category }: { category: CategoryWithPosts }) {
 // ─── page ─────────────────────────────────────────────────────────────────────
 
 export default async function HomePage() {
-  const categoriesWithPosts = await categoriesService.getCategoriesWithPosts();
+  const [categoriesWithPosts, publishedPostsData] = await Promise.all([
+    categoriesService.getCategoriesWithPosts(),
+    postService.findAllPublished(1, 12),
+  ]);
 
-
-  const publishedPosts = categoriesWithPosts.flatMap((cat) => cat.posts);
+  const publishedPosts = publishedPostsData.data;
   const featured = publishedPosts[0];
   const mainArticles = publishedPosts.slice(1, 4);
 
