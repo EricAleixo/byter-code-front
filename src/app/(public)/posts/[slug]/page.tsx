@@ -13,6 +13,37 @@ import { getCurrentUser } from "@/src/utils/getCurrentUser";
 import { CommentsSection } from "./_components/CommentSection";
 import { DynamicIcon } from "@/src/utils/DynamicIcon";
 
+type props = {
+  params: Promise<{ slug: string }>
+}
+
+// ─── Meta dados
+
+export async function generateMetadata({ params }: props) {
+  const { slug } = await params;
+  const post = await postService.findBySlug(slug);
+
+  if (!post) notFound();
+
+  return {
+    title: post.title,
+    description: post.excerpt,
+    openGraph: {
+      title: post.title,
+      description: post.excerpt,
+      url: `https://byter-code.vercel.app/posts/${slug}`,
+      images: [{ url: post.coverImage }],
+      type: "article",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description: post.excerpt,
+      images: [post.coverImage],
+    },
+  };
+}
+
 
 // ─── helpers ──────────────────────────────────────────────────────────────────
 
@@ -37,10 +68,6 @@ function isNewPost(createdAt: string | Date) {
   return diffInDays <= 2;
 }
 // ─── page ─────────────────────────────────────────────────────────────────────
-
-type props = {
-  params: Promise<{ slug: string }>
-}
 
 export default async function PostPage({ params }: props) {
 
