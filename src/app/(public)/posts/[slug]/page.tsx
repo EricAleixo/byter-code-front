@@ -12,6 +12,7 @@ import { TableOfContents } from "../_components/TableOfContents";
 import { getCurrentUser } from "@/src/utils/getCurrentUser";
 import { CommentsSection } from "./_components/CommentSection";
 import { DynamicIcon } from "@/src/utils/DynamicIcon";
+import { LinksSection } from "./_components/LinksSections";
 
 type props = {
   params: Promise<{ slug: string }>
@@ -206,6 +207,8 @@ export default async function PostPage({ params }: props) {
                 ))}
               </div>
             </div>
+
+            <LinksSection links={post.links}/>
 
             {/* comentários */}
             <CommentsSection

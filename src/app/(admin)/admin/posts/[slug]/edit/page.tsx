@@ -57,7 +57,8 @@ export default async function Page({
                         categoryId: post?.category.id,
                         coverImagePublicId: post?.coverImagePublicId,
                         status: post?.status,
-                        tagIds: tagsIds
+                        tagIds: tagsIds,
+                        links: post?.links
                     }}
                     onSubmit={updateAction}
                 />

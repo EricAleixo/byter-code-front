@@ -20,6 +20,7 @@ export type Post = {
   };
   category: ApiCategory;
   postTags: { tag: TagType }[];
+  links: PostLink[];
 };
 
 export type PaginatedPosts = {
@@ -32,4 +33,10 @@ export type PaginatedPosts = {
     hasNextPage: boolean;
     hasPrevPage: boolean;
   } | null;
+};
+
+export type PostLink = {
+  label: string;
+  url: string;
+  type?: "github" | "docs" | "video" | "book" | "other";
 };

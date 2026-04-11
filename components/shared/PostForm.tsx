@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
 import Link from "@tiptap/extension-link";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
-import ResizeImage from "tiptap-extension-resize-image"; import { createLowlight } from "lowlight";
+import ResizeImage from "tiptap-extension-resize-image";
+import { createLowlight } from "lowlight";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -14,8 +15,12 @@ import {
   Heading2, Heading3, Bold, Italic, Code, Link2, List,
   ListOrdered, Quote, Minus, Code2, Undo, Redo, Heading1,
   Upload, Link as LinkIcon, Loader2, Trash2, AlertCircle, ImageIcon,
+  Plus, ExternalLink, BookOpen, FileText,
 } from "lucide-react";
 import { uploadPostImage } from "@/src/app/(admin)/admin/posts/_actions/upload-image.actions";
+import { SiGithub } from "react-icons/si";
+import { FaYoutube } from "react-icons/fa6";
+import { PostLink } from "@/src/types/post";
 
 // ─── types ────────────────────────────────────────────────────────────────────
 
@@ -41,6 +46,7 @@ export type PostFormData = {
   coverImage: string;
   coverImagePublicId?: string;
   status: "DRAFT" | "PUBLISHED";
+  links: PostLink[];
 };
 
 type Props = {
@@ -63,7 +69,22 @@ const EMPTY: PostFormData = {
   coverImage: "",
   coverImagePublicId: undefined,
   status: "DRAFT",
+  links: [],
 };
+
+type LinkTypeMeta = {
+  value: NonNullable<PostLink["type"]>;
+  label: string;
+  icon: React.ReactNode;
+};
+
+const LINK_TYPES: LinkTypeMeta[] = [
+  { value: "github", label: "GitHub", icon: <SiGithub className="size-3.5" /> },
+  { value: "docs", label: "Docs", icon: <FileText className="size-3.5" /> },
+  { value: "video", label: "Vídeo", icon: <FaYoutube className="size-3.5" /> },
+  { value: "book", label: "Livro", icon: <BookOpen className="size-3.5" /> },
+  { value: "other", label: "Outro", icon: <LinkIcon className="size-3.5" /> },
+];
 
 // ─── image extension ──────────────────────────────────────────────────────────
 
@@ -112,9 +133,9 @@ function EditorToolbar({ editor, onImageUpload }: ToolbarProps) {
       title={title}
       onClick={onClick}
       className={`p-1.5 rounded transition-colors ${active
-        ? "bg-violet-500/20 text-violet-400"
-        : "text-zinc-500 hover:text-violet-400 hover:bg-zinc-800"
-      }`}
+          ? "bg-violet-500/20 text-violet-400"
+          : "text-zinc-500 hover:text-violet-400 hover:bg-zinc-800"
+        }`}
     >
       {icon}
     </button>
@@ -125,29 +146,21 @@ function EditorToolbar({ editor, onImageUpload }: ToolbarProps) {
       {btn(editor.isActive("bold"), () => editor.chain().focus().toggleBold().run(), <Bold className="size-3.5" />, "Negrito")}
       {btn(editor.isActive("italic"), () => editor.chain().focus().toggleItalic().run(), <Italic className="size-3.5" />, "Itálico")}
       {btn(editor.isActive("code"), () => editor.chain().focus().toggleCode().run(), <Code className="size-3.5" />, "Código inline")}
-
       <div className="w-px h-4 bg-zinc-700 mx-1" />
-
       {btn(editor.isActive("heading", { level: 1 }), () => editor.chain().focus().toggleHeading({ level: 1 }).run(), <Heading1 className="size-3.5" />, "Título H1")}
       {btn(editor.isActive("heading", { level: 2 }), () => editor.chain().focus().toggleHeading({ level: 2 }).run(), <Heading2 className="size-3.5" />, "Título H2")}
       {btn(editor.isActive("heading", { level: 3 }), () => editor.chain().focus().toggleHeading({ level: 3 }).run(), <Heading3 className="size-3.5" />, "Título H3")}
-
       <div className="w-px h-4 bg-zinc-700 mx-1" />
-
       {btn(editor.isActive("bulletList"), () => editor.chain().focus().toggleBulletList().run(), <List className="size-3.5" />, "Lista")}
       {btn(editor.isActive("orderedList"), () => editor.chain().focus().toggleOrderedList().run(), <ListOrdered className="size-3.5" />, "Lista numerada")}
       {btn(editor.isActive("blockquote"), () => editor.chain().focus().toggleBlockquote().run(), <Quote className="size-3.5" />, "Citação")}
       {btn(editor.isActive("codeBlock"), () => editor.chain().focus().toggleCodeBlock().run(), <Code2 className="size-3.5" />, "Bloco de código")}
       {btn(false, () => editor.chain().focus().setHorizontalRule().run(), <Minus className="size-3.5" />, "Divisor")}
       {btn(editor.isActive("link"), setLink, <Link2 className="size-3.5" />, "Link")}
-
       <div className="w-px h-4 bg-zinc-700 mx-1" />
-
       {btn(false, () => editor.chain().focus().undo().run(), <Undo className="size-3.5" />, "Desfazer")}
       {btn(false, () => editor.chain().focus().redo().run(), <Redo className="size-3.5" />, "Refazer")}
-
       <div className="w-px h-4 bg-zinc-700 mx-1" />
-
       <input
         ref={fileInputRef}
         type="file"
@@ -155,9 +168,10 @@ function EditorToolbar({ editor, onImageUpload }: ToolbarProps) {
         className="hidden"
         onChange={(e) => {
           const file = e.target.files?.[0];
-          if (file) onImageUpload(file).finally(() => {
-            if (fileInputRef.current) fileInputRef.current.value = "";
-          });
+          if (file)
+            onImageUpload(file).finally(() => {
+              if (fileInputRef.current) fileInputRef.current.value = "";
+            });
         }}
       />
       {btn(false, () => fileInputRef.current?.click(), <ImageIcon className="size-3.5" />, "Inserir imagem")}
@@ -183,15 +197,12 @@ function CoverImageInput({ value, onChange }: CoverImageProps) {
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
-
     if (file.size > 5 * 1024 * 1024) {
       setUploadError("Arquivo muito grande. Máximo permitido: 5MB.");
       return;
     }
-
     setUploading(true);
     setUploadError(null);
-
     try {
       const fd = new FormData();
       fd.append("image", file);
@@ -220,8 +231,7 @@ function CoverImageInput({ value, onChange }: CoverImageProps) {
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${mode === "upload" ? "bg-zinc-700 text-zinc-100 shadow" : "text-zinc-500 hover:text-zinc-300"
             }`}
         >
-          <Upload className="size-3" />
-          Upload
+          <Upload className="size-3" /> Upload
         </button>
         <button
           type="button"
@@ -229,8 +239,7 @@ function CoverImageInput({ value, onChange }: CoverImageProps) {
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${mode === "url" ? "bg-zinc-700 text-zinc-100 shadow" : "text-zinc-500 hover:text-zinc-300"
             }`}
         >
-          <LinkIcon className="size-3" />
-          URL direta
+          <LinkIcon className="size-3" /> URL direta
         </button>
       </div>
 
@@ -245,8 +254,7 @@ function CoverImageInput({ value, onChange }: CoverImageProps) {
               title="Remover imagem"
               className="flex items-center gap-2 px-3 py-2 rounded-lg bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold transition-colors"
             >
-              <Trash2 className="size-3.5" />
-              Remover imagem
+              <Trash2 className="size-3.5" /> Remover imagem
             </button>
           </div>
         </div>
@@ -273,10 +281,10 @@ function CoverImageInput({ value, onChange }: CoverImageProps) {
                 disabled={uploading}
                 onClick={() => fileInputRef.current?.click()}
                 className={`w-full h-9 flex items-center justify-center gap-2 rounded-lg border text-sm font-medium transition-all ${uploading
-                  ? "border-zinc-700 bg-zinc-900 text-zinc-500 cursor-not-allowed"
-                  : uploadError
-                    ? "border-rose-600/40 bg-rose-500/10 text-rose-400 hover:bg-rose-500/20"
-                    : "border-zinc-700 bg-zinc-900 text-zinc-400 hover:border-violet-600/60 hover:text-violet-400 hover:bg-violet-500/10"
+                    ? "border-zinc-700 bg-zinc-900 text-zinc-500 cursor-not-allowed"
+                    : uploadError
+                      ? "border-rose-600/40 bg-rose-500/10 text-rose-400 hover:bg-rose-500/20"
+                      : "border-zinc-700 bg-zinc-900 text-zinc-400 hover:border-violet-600/60 hover:text-violet-400 hover:bg-violet-500/10"
                   }`}
               >
                 {uploading ? (
@@ -297,6 +305,130 @@ function CoverImageInput({ value, onChange }: CoverImageProps) {
           )}
         </div>
       )}
+    </div>
+  );
+}
+
+// ─── post links ───────────────────────────────────────────────────────────────
+
+type PostLinksProps = {
+  links: PostLink[];
+  onChange: (links: PostLink[]) => void;
+};
+
+/** Dropdown customizado para o tipo de link, com ícone + label */
+function LinkTypeDropdown({
+  value,
+  onChange,
+}: {
+  value: NonNullable<PostLink["type"]>;
+  onChange: (v: NonNullable<PostLink["type"]>) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const active = LINK_TYPES.find((t) => t.value === value) ?? LINK_TYPES[4];
+
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className={`h-8 flex items-center gap-1.5 px-2.5 rounded-md border text-xs font-medium transition-colors whitespace-nowrap ${open
+            ? "border-violet-600 bg-zinc-800 text-zinc-200"
+            : "border-zinc-700 bg-zinc-800 text-zinc-400 hover:border-zinc-600 hover:text-zinc-200"
+          }`}
+      >
+        {active.icon}
+        <span>{active.label}</span>
+        <ChevronDown className={`size-3 text-zinc-500 transition-transform ml-0.5 ${open ? "rotate-180" : ""}`} />
+      </button>
+
+      {open && (
+        <div className="absolute z-40 top-full mt-1 right-0 min-w-30 bg-zinc-900 border border-zinc-700 rounded-lg shadow-xl overflow-hidden">
+          {LINK_TYPES.map((t) => (
+            <button
+              key={t.value}
+              type="button"
+              onClick={() => { onChange(t.value); setOpen(false); }}
+              className={`w-full flex items-center gap-2 px-3 py-2 text-xs hover:bg-zinc-800 transition-colors ${value === t.value ? "text-violet-400 bg-zinc-800/60" : "text-zinc-400"
+                }`}
+            >
+              {t.icon}
+              {t.label}
+              {value === t.value && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-violet-500" />}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function PostLinksInput({ links, onChange }: PostLinksProps) {
+  function addLink() {
+    onChange([...links, { label: "", url: "", type: "other" }]);
+  }
+
+  function removeLink(index: number) {
+    onChange(links.filter((_, i) => i !== index));
+  }
+
+  function updateLink(index: number, patch: Partial<PostLink>) {
+    onChange(links.map((l, i) => (i === index ? { ...l, ...patch } : l)));
+  }
+
+  return (
+    <div className="space-y-3">
+      {links.length > 0 && (
+        <div className="space-y-2">
+          {links.map((link, i) => (
+            <div
+              key={i}
+              className="grid grid-cols-[1fr_1fr_auto_auto] gap-2 items-center p-3 rounded-lg border border-zinc-700 bg-zinc-900/60"
+            >
+              {/* label */}
+              <Input
+                placeholder="Rótulo (ex: Repositório)"
+                value={link.label}
+                onChange={(e) => updateLink(i, { label: e.target.value })}
+                className="bg-zinc-800 border-zinc-700 text-zinc-200 placeholder:text-zinc-600 focus-visible:ring-violet-600 h-8 text-xs"
+              />
+
+              {/* url */}
+              <Input
+                placeholder="https://..."
+                value={link.url}
+                onChange={(e) => updateLink(i, { url: e.target.value })}
+                className="bg-zinc-800 border-zinc-700 text-zinc-200 placeholder:text-zinc-600 focus-visible:ring-violet-600 h-8 text-xs"
+              />
+
+              {/* type dropdown customizado */}
+              <LinkTypeDropdown
+                value={link.type ?? "other"}
+                onChange={(v) => updateLink(i, { type: v })}
+              />
+
+              {/* remove */}
+              <button
+                type="button"
+                onClick={() => removeLink(i)}
+                title="Remover link"
+                className="p-1.5 rounded-md text-zinc-600 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
+              >
+                <Trash2 className="size-3.5" />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <button
+        type="button"
+        onClick={addLink}
+        className="flex items-center gap-2 px-3 py-2 rounded-lg border border-dashed border-zinc-700 text-xs font-medium text-zinc-500 hover:text-violet-400 hover:border-violet-600/60 hover:bg-violet-500/10 transition-all w-full justify-center"
+      >
+        <Plus className="size-3.5" />
+        Adicionar link
+      </button>
     </div>
   );
 }
@@ -360,12 +492,8 @@ export default function PostForm({
     const fd = new FormData();
     fd.append("image", file);
     const data = await uploadPostImage(fd);
-
     (editor?.chain().focus() as any)
-      .setImage({
-        src: data.imageUrl,
-        "data-public-id": data.publicId,
-      })
+      .setImage({ src: data.imageUrl, "data-public-id": data.publicId })
       .run();
   }
 
@@ -395,6 +523,10 @@ export default function PostForm({
     fd.set("readTime", readTime);
     fd.set("status", status);
     form.tagIds.forEach((id) => fd.append("tagIds", id));
+    // serializa links como JSON string única
+    if (form.links.length > 0) {
+      fd.set("links", JSON.stringify(form.links));
+    }
     onSubmit(fd, status);
   }
 
@@ -443,6 +575,28 @@ export default function PostForm({
           {form.excerpt || <span className="text-zinc-700">Sem resumo</span>}
         </p>
 
+        {form.links.length > 0 && (
+          <div className="flex flex-wrap gap-2 mb-6">
+            {form.links.map((link, i) =>
+              link.label && link.url ? (
+                <a
+                  key={i}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-zinc-700 bg-zinc-800 text-xs font-medium text-zinc-300 hover:text-violet-400 hover:border-violet-600/50 transition-colors"
+                >
+                  <ExternalLink className="size-3" />
+                  {link.label}
+                  {link.type && link.type !== "other" && (
+                    <span className="text-[10px] text-zinc-600 uppercase">{link.type}</span>
+                  )}
+                </a>
+              ) : null,
+            )}
+          </div>
+        )}
+
         <div
           className="prose prose-invert prose-sm max-w-none border-t border-zinc-800 pt-6"
           dangerouslySetInnerHTML={{ __html: form.content || "<p class='text-zinc-700'>Sem conteúdo ainda.</p>" }}
@@ -485,7 +639,8 @@ export default function PostForm({
           value={form.excerpt}
           onChange={(e) => set("excerpt", e.target.value)}
           rows={2}
-          className={`w-full bg-zinc-900 border rounded-lg px-4 py-3 text-sm text-zinc-300 placeholder:text-zinc-600 focus:outline-none focus:border-violet-600 resize-none transition-colors ${errors.excerpt ? "border-rose-600" : "border-zinc-700"}`}
+          className={`w-full bg-zinc-900 border rounded-lg px-4 py-3 text-sm text-zinc-300 placeholder:text-zinc-600 focus:outline-none focus:border-violet-600 resize-none transition-colors ${errors.excerpt ? "border-rose-600" : "border-zinc-700"
+            }`}
         />
         {errors.excerpt && <p className="text-xs text-rose-400 mt-1.5">{errors.excerpt}</p>}
       </div>
@@ -500,7 +655,11 @@ export default function PostForm({
             <button
               type="button"
               onClick={() => setCatOpen((o) => !o)}
-              className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg border bg-zinc-900 text-sm transition-colors ${errors.categoryId ? "border-rose-600" : catOpen ? "border-violet-600" : "border-zinc-700 hover:border-zinc-600"
+              className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg border bg-zinc-900 text-sm transition-colors ${errors.categoryId
+                  ? "border-rose-600"
+                  : catOpen
+                    ? "border-violet-600"
+                    : "border-zinc-700 hover:border-zinc-600"
                 }`}
             >
               {activeCat ? (
@@ -521,7 +680,8 @@ export default function PostForm({
                     key={cat.id}
                     type="button"
                     onClick={() => { set("categoryId", cat.id); setCatOpen(false); }}
-                    className={`w-full flex items-center gap-2.5 px-3 py-2.5 text-sm hover:bg-zinc-800 transition-colors ${form.categoryId === cat.id ? "bg-zinc-800" : ""}`}
+                    className={`w-full flex items-center gap-2.5 px-3 py-2.5 text-sm hover:bg-zinc-800 transition-colors ${form.categoryId === cat.id ? "bg-zinc-800" : ""
+                      }`}
                   >
                     <TagIcon className="size-3.5" style={{ color: cat.color }} />
                     <span className="text-zinc-300">{cat.name}</span>
@@ -547,8 +707,8 @@ export default function PostForm({
                   type="button"
                   onClick={() => toggleTag(tag.id)}
                   className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold border transition-all ${active
-                    ? "bg-violet-500/20 text-violet-300 border-violet-500/30"
-                    : "bg-zinc-900 text-zinc-600 border-zinc-800 hover:border-zinc-600 hover:text-zinc-400"
+                      ? "bg-violet-500/20 text-violet-300 border-violet-500/30"
+                      : "bg-zinc-900 text-zinc-600 border-zinc-800 hover:border-zinc-600 hover:text-zinc-400"
                     }`}
                 >
                   {active && <Flame className="size-2.5 inline mr-1" />}
@@ -572,6 +732,14 @@ export default function PostForm({
             set("coverImagePublicId", publicId);
           }}
         />
+      </div>
+
+      {/* links */}
+      <div>
+        <label className="block text-xs font-bold uppercase tracking-widest text-zinc-500 mb-2">
+          <ExternalLink className="size-3 inline mr-1" />Links relacionados
+        </label>
+        <PostLinksInput links={form.links} onChange={(links) => set("links", links)} />
       </div>
 
       {/* editor tiptap */}
