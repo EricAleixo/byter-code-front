@@ -158,6 +158,8 @@ export default async function PostPage({ params }: props) {
             {/* ações do post */}
             <PostActions path={`/posts/${post.slug}`} title={post.title} />
 
+            <LinksSection links={post.links} />
+
             {/* posts relacionados */}
             <div className="mt-10">
               <div className="flex items-center gap-3 mb-5">
@@ -207,8 +209,6 @@ export default async function PostPage({ params }: props) {
                 ))}
               </div>
             </div>
-
-            <LinksSection links={post.links}/>
 
             {/* comentários */}
             <CommentsSection
