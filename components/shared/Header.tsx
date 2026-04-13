@@ -19,6 +19,7 @@ export async function Header() {
     { label: "Início", href: "/" },
     { label: "Seções", href: "/sections" },
     { label: "Artigos", href: "/posts" },
+    { label: "Cursos", href: "/cursos" },
     { label: "Posts", href: "/admin/posts", adminPath: true },
     { label: "Categorias", href: "/admin/categories", adminPath: true },
     { label: "Tags", href: "/admin/tags", adminPath: true },
