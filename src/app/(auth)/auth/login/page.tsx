@@ -47,25 +47,25 @@ export default function LoginPage() {
               {/* Google — redireciona direto para o backend */}
               <Button
                 variant="outline"
-                className="w-full h-11 bg-zinc-800/80 border-zinc-700 hover:bg-zinc-700/80 hover:border-zinc-600 text-zinc-100 font-medium text-sm gap-3 transition-all"
+                className="w-full h-11 bg-zinc-800/80 border-zinc-700 hover:bg-zinc-700/80 hover:border-zinc-600 hover:text-white text-zinc-100 font-medium text-sm gap-3 transition-all"
                 asChild
               >
-                <a href={`${API}/auth/google`}>
+                <Link href={`${API}/auth/google`}>
                   <FcGoogle className="size-4 shrink-0" />
                   Continuar com Google
-                </a>
+                </Link>
               </Button>
 
               {/* GitHub */}
               <Button
                 variant="outline"
-                className="w-full h-11 bg-zinc-800/80 border-zinc-700 hover:bg-zinc-700/80 hover:border-zinc-600 text-zinc-100 font-medium text-sm gap-3 transition-all"
+                className="w-full h-11 bg-zinc-800/80 border-zinc-700 hover:bg-zinc-700/80 hover:border-zinc-600 hover:text-white text-zinc-100 font-medium text-sm gap-3 transition-all"
                 asChild
               >
-                <a href={`${API}/auth/github`}>
+                <Link href={`${API}/auth/github`}>
                   <FaGithub className="size-4 shrink-0 text-zinc-100" />
                   Continuar com GitHub
-                </a>
+                </Link>
               </Button>
             </div>
 
