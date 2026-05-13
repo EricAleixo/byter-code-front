@@ -1,4 +1,4 @@
-import { Course, Level } from "../page";
+import { Course, Level } from "@/src/utils/courses";
 import { BookOpen } from "lucide-react";
 
 const levelConfig: Record<Level, { label: string; className: string }> = {
