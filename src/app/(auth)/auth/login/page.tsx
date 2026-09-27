@@ -1,5 +1,5 @@
 // login/page.tsx
-import { Button } from "@/components/ui/button";
+import { Button } from "@/src/components/ui/button";
 import { Terminal } from "lucide-react";
 import { FaGithub } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";

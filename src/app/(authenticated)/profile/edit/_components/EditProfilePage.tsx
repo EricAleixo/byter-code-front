@@ -15,8 +15,8 @@ import {
   User,
   Lock,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { updateProfileAction } from "../_actions/update-profile.actions";
+import { Button } from "@/src/components/ui/button";
+import { updateProfileAction } from "../../../../../actions/update-profile.actions";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 

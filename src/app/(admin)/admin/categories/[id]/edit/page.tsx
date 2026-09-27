@@ -2,8 +2,8 @@ import { cookies } from "next/headers";
 import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Layers } from "lucide-react";
-import { updateCategoryAction } from "../../_actions/actions";
-import CategoryForm from "@/components/shared/CategoriesForm";
+import { updateCategoryAction } from "../../../../../../actions/categories.actions";
+import CategoryForm from "@/src/components/shared/CategoriesForm";
 
 async function getCategory(id: string) {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories/${id}`, { cache: "no-store" });

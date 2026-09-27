@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
-import PostForm from "@/components/shared/PostForm";
-import { createPostAction } from "../_actions/actions";
+import PostForm from "@/src/components/shared/PostForm";
+import { createPostAction } from "../../../../../actions/post.actions";
 
 async function getCategories() {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories`, { cache: "no-store" });
@@ -29,7 +29,7 @@ export default async function NewPostPage({
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100">
 
-      <main className="mx-auto max-w-5xl px-4 sm:px-6 py-10">
+      <main className="mx-auto max-w-7xl px-4 sm:px-6 py-10">
         <div className="mb-8">
           <h1 className="text-2xl font-black text-white mb-1">Criar novo post</h1>
           <p className="text-sm text-zinc-500">
@@ -43,6 +43,7 @@ export default async function NewPostPage({
           isEdit={false}
           error={error}
           onSubmit={createPostAction}
+          apiUrl={process.env.API_URL_AI!}
         />
       </main>
     </div>

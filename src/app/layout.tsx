@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import { cn } from "@/lib/utils";
-import { Header } from "@/components/shared/Header";
-import { HeaderMobile } from "@/components/shared/HeaderMobile";
-import { Footer } from "@/components/shared/Footer";
+import { Header } from "@/src/components/shared/Header";
+import { HeaderMobile } from "@/src/components/shared/HeaderMobile";
+import { Footer } from "@/src/components/shared/Footer";
+import { cn } from "@/src/utils/utils";
 
 const jetbrainsMono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-mono' });
 

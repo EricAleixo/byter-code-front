@@ -5,7 +5,6 @@ import {
   Plus,
   Pencil,
   Eye,
-  Tag,
   Clock,
   CalendarDays,
   FileText,
@@ -14,10 +13,9 @@ import {
   ImageOff,
   ChevronLeft,
   ChevronRight,
-  Trash,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "@/src/components/ui/button";
+import { Badge } from "@/src/components/ui/badge";
 import { Post, PaginatedPosts } from "@/src/types/post";
 import { postService } from "@/src/services/posts.service";
 import { ButtonDelete } from "./_components/ButtonDelete";

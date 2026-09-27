@@ -2,8 +2,8 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Plus, Pencil, Tag, CalendarDays, Trash2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { deleteTagAction } from "./_actions/action";
+import { Button } from "@/src/components/ui/button";
+import { deleteTagAction } from "../../../../actions/tags.actions";
 
 type Tag = {
   id: string;
@@ -38,7 +38,7 @@ export default async function AdminTagsPage() {
 
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100">
-      <main className="mx-auto max-w-6xl px-4 sm:px-6 py-10 space-y-8">
+      <main className="mx-auto max-w-7xl px-4 sm:px-6 py-10 space-y-8">
 
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div>

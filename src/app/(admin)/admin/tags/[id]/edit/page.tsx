@@ -2,8 +2,8 @@ import { cookies } from "next/headers";
 import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Tag } from "lucide-react";
-import TagForm from "@/components/shared/TagsForm";
-import { updateTagAction } from "../../_actions/action";
+import TagForm from "@/src/components/shared/TagsForm";
+import { updateTagAction } from "../../../../../../actions/tags.actions";
 
 async function getTag(id: string) {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/tags/${id}`, { cache: "no-store" });

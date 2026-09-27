@@ -1,9 +1,7 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import Link from "next/link";
-import { ArrowLeft, Tag } from "lucide-react";
-import TagForm from "@/components/shared/TagsForm";
-import { createTagAction } from "../_actions/action";
+import TagForm from "@/src/components/shared/TagsForm";
+import { createTagAction } from "../../../../../actions/tags.actions";
 
 export default async function NewTagPage({
   searchParams,

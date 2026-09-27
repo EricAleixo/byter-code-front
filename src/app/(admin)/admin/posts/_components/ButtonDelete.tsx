@@ -1,8 +1,8 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/src/components/ui/button";
 import { Trash } from "lucide-react";
-import { deletePostAction } from "../_actions/actions";
+import { deletePostAction } from "../../../../../actions/post.actions";
 import { useTransition } from "react";
 
 import {
@@ -15,7 +15,7 @@ import {
   AlertDialogFooter,
   AlertDialogCancel,
   AlertDialogAction,
-} from "@/components/ui/alert-dialog";
+} from "@/src/components/ui/alert-dialog";
 
 type Props = {
   id: string;

@@ -9,8 +9,8 @@ import {
   Layers,
   Trash2,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { deleteCategoryAction } from "./_actions/actions";
+import { Button } from "@/src/components/ui/button";
+import { deleteCategoryAction } from "../../../../actions/categories.actions";
 import { formatDate } from "@/src/utils/formatDate";
 import { DynamicIcon } from "@/src/utils/DynamicIcon";
 import { ApiCategory } from "@/src/types/category";
@@ -51,7 +51,7 @@ export default async function AdminCategoriesPage() {
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100">
 
-      <main className="mx-auto max-w-6xl px-4 sm:px-6 py-10 space-y-8">
+      <main className="mx-auto max-w-7xl px-4 sm:px-6 py-10 space-y-8">
 
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div>

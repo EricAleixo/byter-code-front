@@ -2,8 +2,8 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Layers } from "lucide-react";
-import CategoryForm from "@/components/shared/CategoriesForm";
-import { createCategoryAction } from "../_actions/actions";
+import CategoryForm from "@/src/components/shared/CategoriesForm";
+import { createCategoryAction } from "../../../../../actions/categories.actions";
 
 export default async function NewCategoryPage({
   searchParams,

@@ -11,9 +11,11 @@ import {
   Tag,
   FileText,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/src/components/ui/button";
 import { isAdmin } from "@/src/utils/isAdmin";
 import { logout } from "@/src/utils/logout";
+import { enrollmentsService } from "@/src/services/enrollments.service";
+import { ProfileCourses } from "./_components/ProfileCourses";
 
 function RoleBadge({ role }: { role: string }) {
   return role === "admin" ? (
@@ -31,6 +33,8 @@ export default async function ProfilePage() {
 
   const user = await getCurrentUser();
   if (!user) redirect("/auth/login");
+
+  const myCourses = await enrollmentsService.findMyCourses();
 
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100">
@@ -163,6 +167,8 @@ export default async function ProfilePage() {
 
           {/* coluna direita */}
           <div className="lg:col-span-2 space-y-4">
+
+            <ProfileCourses courses={myCourses} />
 
             {/* acesso rápido admin */}
             {isAdmin(user) && (

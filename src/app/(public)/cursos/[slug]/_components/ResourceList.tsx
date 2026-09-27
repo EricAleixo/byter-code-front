@@ -1,15 +1,15 @@
-import { Resource } from "@/src/utils/courses";
+import { CourseResource } from "@/src/types/course";
 import { FileText, Newspaper, ExternalLink } from "lucide-react";
 import { FaGithub, FaYoutube } from "react-icons/fa6";
 
-const icons: Record<Resource["type"], React.ReactNode> = {
-  repo: <FaGithub size={15} />,
-  doc: <FileText size={15} />,
-  video: <FaYoutube size={15} />,
-  article: <Newspaper size={15} />,
+const icons: Record<CourseResource["type"], React.ReactNode> = {
+  REPO: <FaGithub size={15} />,
+  DOC: <FileText size={15} />,
+  VIDEO: <FaYoutube size={15} />,
+  ARTICLE: <Newspaper size={15} />,
 };
 
-export function ResourceList({ resources }: { resources: Resource[] }) {
+export function ResourceList({ resources }: { resources: CourseResource[] }) {
   return (
     <ul className="space-y-2">
       {resources.map((r) => (

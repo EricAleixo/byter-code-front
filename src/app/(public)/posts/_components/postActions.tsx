@@ -12,7 +12,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from "@/src/components/ui/tooltip";
 import { useEffect, useState } from "react";
 
 type Props = {

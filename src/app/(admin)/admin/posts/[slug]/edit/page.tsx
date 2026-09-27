@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
-import PostForm from "@/components/shared/PostForm";
-import { updatePostAction } from "../../_actions/actions";
+import PostForm from "@/src/components/shared/PostForm";
+import { updatePostAction } from "../../../../../../actions/post.actions";
 import { categoriesService } from "@/src/services/categories.service";
 import { postService } from "@/src/services/posts.service";
 

@@ -1,5 +1,5 @@
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/src/components/ui/badge";
+import { Separator } from "@/src/components/ui/separator";
 import {
   Clock,
   ChevronRight,
@@ -12,7 +12,7 @@ import { categoriesService } from "@/src/services/categories.service";
 import { CategoryWithPosts } from "@/src/types/category";
 import { Post } from "@/src/types/post";
 import { formatDate } from "@/src/utils/formatDate";
-import { UserAvatar } from "@/components/shared/UserAvatar";
+import { UserAvatar } from "@/src/components/shared/UserAvatar";
 import { DynamicIcon } from "@/src/utils/DynamicIcon";
 import { LanguageMostUsed } from "./_components/LanguageMostUsed";
 import { postService } from "@/src/services/posts.service";

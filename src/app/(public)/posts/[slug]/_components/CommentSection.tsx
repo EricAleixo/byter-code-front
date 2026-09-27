@@ -2,10 +2,10 @@
 
 import { useState, useRef, useTransition } from "react";
 import { ThumbsUp, MessageSquare, Send, Loader2, CornerDownRight, UserX } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/src/components/ui/button";
 import { formatDate } from "@/src/utils/formatDate";
 import { User } from "@/src/types/user";
-import { createCommentAction } from "../_actions/createComment.actions";
+import { createCommentAction } from "../../../../../actions/createComment.actions";
 import Link from "next/link";
 
 // ─── tipos ────────────────────────────────────────────────────────────────────
