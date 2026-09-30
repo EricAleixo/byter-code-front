@@ -49,6 +49,7 @@ export default async function Page({
                     tags={tags}
                     isEdit={true}
                     error={error}
+                    apiUrl={process.env.API_URL_AI!}
                     initialData={{
                         title: post?.title,
                         content: post?.content,
